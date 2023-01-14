@@ -3,10 +3,14 @@
 namespace App;
 
 use App\Connection;
-
+use HTTP_Request2;
 class PagCompleto {
 
     private $database;
+
+    const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdG9yZUlkIjoiNCIsInVzZXJJZCI6IjkwNDAiLCJpYXQiOjE2NzM2MzcwMTUsImV4cCI6MTY3NDI2OTk5OX0.es5E5C2NYWlXcUwmHTAcE_AWkqwjHfhzy6q-IrEd6SE';
+
+    const ENDPOINT = 'https://api11.ecompleto.com.br/exams/processTransaction?accessToken=' . self::TOKEN;
 
     public function __construct()
     {
@@ -20,14 +24,14 @@ class PagCompleto {
         foreach($this->database->connect->query($sql) as $row) {
 
             $body = [                
-                'external_order_id' => $row['id'],
-                'amount' => $row['valor_total'],
+                'external_order_id' => $row['id_pedido'],
+                'amount' => floatval($row['valor_total']),
                 'card_number' => $row['num_cartao'],
-                'card_cvv' => $row['codigo_verificacao'],
-                'card_expiration_date' => $row['vencimento'],
+                'card_cvv' => strval($row['codigo_verificacao']),
+                'card_expiration_date' => $this->format_date($row['vencimento']),
                 'card_holder_name' => $row['nome_portador'],
                 'customer' => [
-                    'external_id' => $row['id_cliente'],
+                    'external_id' => strval($row['id_cliente']),
                     'name' => $row['nome'],
                     'type' => $row['tipo_pessoa'],
                     'email' => $row['email'],
@@ -40,11 +44,33 @@ class PagCompleto {
                 ]
             ];
 
-            $call_API = json_encode($body);
+           $this->call_API(json_encode($body));
         }
-
     }
 
+    private function call_API(string $body)
+    {
+        $request = new HTTP_Request2();
+        $request->setUrl(self::ENDPOINT);
+        $request->setMethod(HTTP_Request2::METHOD_POST);
+        $request->setBody($body);
+        
+        $response = $request->send();
+        echo $response->getBody() . "<br>";
+    }
+
+    private function format_date(string $old_card_expiration_date)
+    {
+        $dismantled_date = explode('-', $old_card_expiration_date);
+        
+        $year = $dismantled_date[0];
+        $year = substr($year, 2);
+
+        $day = $dismantled_date[1];
+        
+        return $day . $year;
+    }
+    
     private function set_type_person(string $cpf_cnpj_rh)
     {
         if(strlen($cpf_cnpj_rh) == 11 || strlen($cpf_cnpj_rh) == 14) {
