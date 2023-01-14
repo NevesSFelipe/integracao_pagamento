@@ -1,19 +1,9 @@
 <?php
 
-
-require_once 'vendor/autoload.php';
-require_once 'vendor/pear/http_request2/HTTP/Request2.php';
+require_once __DIR__ . '/config/app.php';
 
 use App\PagCompleto;
-
-$teste = new PagCompleto;
-$teste->send_API_request();
-
-
-
-
-
-
+$pagCompleto = new PagCompleto();
+$pagCompleto->send_API_request();
 
 ?>
-
