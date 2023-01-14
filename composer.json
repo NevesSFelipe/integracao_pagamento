@@ -1,8 +1,24 @@
 {
-    "name": "fsn/api-pagamento",
-    "autoload": {
-        "psr-4": {
-            "App\\": "App/"
-        }
+    "external_order_id": $row['id'],
+    "amount": $row['valor_total'],
+    "card_number": "4111111111111111",
+    "card_cvv": "123",
+    "card_expiration_date": "0922",
+    "card_holder_name": "Morpheus Fishburne",
+
+    ci.*
+
+    "customer": {
+        "external_id": "3311",
+        "name": "Morpheus Fishburne",
+        "type": $row['tipo_pessoa'],
+        "email": "mopheus@nabucodonozor.com",
+        "documents": [
+            {
+                "type": "cpf",
+                "number": "30621143049"
+            }
+        ],
+        "birthday": "1965-01-01"
     }
 }
