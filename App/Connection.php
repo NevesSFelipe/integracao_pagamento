@@ -2,21 +2,25 @@
 
 namespace App;
 
-use Exception;
+use PDO;
+use PDOException;
 
 class Connection {
 
     const HOST = "localhost";
     const USER = "postgres";
     const PASS ="qwe@123";
-    const BANK = "teste";
+    const DB_NAME = "teste";
 
-    private $connect;
+    public $connect;
 
     public function __construct()
     {
-        $this->connect = pg_connect("host=" . self::HOST . " dbname=" . self::BANK . " user=" . self::USER . " password=" . self::PASS);
-        echo "Conexão efetuada com sucesso!!";  
+        try {
+            $this->connect = new PDO("pgsql:host=" . self::HOST . ";dbname=" . self::DB_NAME, self::USER, self::PASS);
+        } catch(PDOException $e) {
+            echo $e->getMessage();
+        } 
     }
 
 
