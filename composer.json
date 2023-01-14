@@ -1,0 +1,8 @@
+{
+    "name": "fsn/api-pagamento",
+    "autoload": {
+        "psr-4": {
+            "App\\": "App/"
+        }
+    }
+}
