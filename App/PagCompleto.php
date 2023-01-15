@@ -40,7 +40,8 @@ class PagCompleto
                 ],
             ];
 
-            $this->call_API(json_encode($body));
+            $return_api = $this->call_API(json_encode($body));
+            $this->update_order_status($row['id_pedido'], $return_api);
         }
     }
 
@@ -52,7 +53,29 @@ class PagCompleto
         $request->setBody($body);
 
         $response = $request->send();
-        echo $response->getBody() . "<br>";
+        return $response->getBody();
+    }
+
+    private function update_order_status(int $id_pedido, string $return_api)
+    {
+        $array_return_api = json_decode($return_api, true);
+        
+        if(!$array_return_api['Error']) {
+
+            if($array_return_api['Transaction_code'] == '00') {
+                $sql = "UPDATE pedidos SET id_situacao = 2 WHERE id = $id_pedido";
+            }
+
+            if(
+                $array_return_api['Transaction_code'] == '02' || 
+                $array_return_api['Transaction_code'] == '03' || 
+                $array_return_api['Transaction_code'] == '04'
+            ) { 
+                $sql = "UPDATE pedidos SET id_situacao = 3 WHERE id = $id_pedido";
+            }
+
+            $this->database->connect->query($sql);
+        }
     }
 
     private function format_date(string $old_card_expiration_date)
