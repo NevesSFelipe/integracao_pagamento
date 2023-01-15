@@ -42,6 +42,7 @@ class PagCompleto
 
             $return_api = $this->call_API(json_encode($body));
             $this->update_order_status($row['id_pedido'], $return_api);
+            $this->update_intermediate_return($row['id_pedido'], $return_api);
         }
     }
 
@@ -73,6 +74,17 @@ class PagCompleto
             ) { 
                 $sql = "UPDATE pedidos SET id_situacao = 3 WHERE id = $id_pedido";
             }
+
+            $this->database->connect->query($sql);
+        }
+    }
+
+    private function update_intermediate_return(int $id_pedido, string $return_api)
+    {
+        $array_return_api = json_decode($return_api, true);
+
+        if(!$array_return_api['Error']) {
+            $sql = "UPDATE pedidos_pagamentos SET retorno_intermediador = '" . $array_return_api['Transaction_code'] . " - " . $array_return_api['Message'] . "', data_processamento = '" . date('d-m-Y') . "' WHERE id_pedido = $id_pedido";
 
             $this->database->connect->query($sql);
         }
