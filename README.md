@@ -13,3 +13,11 @@ Critérios de desenvolvimento:
 - O retorno da API deverá ser salvo na coluna “retorno_intermediador” da tabela
 - “pedidos_pagamentos”.
 - Disponibilizar desenvolvimento em repositório online (Github, Bitbucket, etc)
+
+#Como executar
+- Certifique-se de verficiar a versão do PHP. (Recomendado 8.2.0);
+- Rodar o comando: composer update
+- Renomear o arquivo: ".env.example" para ".env"
+- Modificar os valores das variáveis de ambiente no arquivo ".env"
+- Criar um banco de dados no postgress
+- Criar / Inserir tabelas conforme os arquivos na pasta "database"
